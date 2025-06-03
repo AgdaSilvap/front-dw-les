@@ -1,0 +1,62 @@
+/*layout home*/
+.container-fluid {
+  height: 100vh;
+}
+
+.nome-sistema {
+  font-family: Poppins, sans-serif;
+  color: #6D6158;
+}
+
+.image-section {
+  display: flex;
+  background-color: #E6DBCD;
+  font-family: Poppins, sans-serif;
+  color: #6D6158;
+}
+
+/*sidebar*/
+#imagem-perfil {
+  width: 50px;
+  margin-top: 25px;
+  margin-left: 10px;
+}
+
+#side-bar {
+  margin: 0;
+  width: 100px;
+  height: 100vh;
+  background-color: #E6DBCD;
+}
+
+/*card link*/
+.link {
+  padding: 5rem;
+  width: 4rem;
+  height: 4rem;
+  background-color: #fff;
+  color: #6D6158;
+}
+
+/*home sections*/
+.home-section {
+  background-color: #E6DBCD;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+}
+
+
+/*formulários*/
+.form-label {
+  font-family: Poppins, sans-serif;
+  color: #6D6158;
+}
+
+.btn-form {
+  background-color: #E6DBCD;
+  color: #565656;
+  font-family: Poppins, sans-serif;
+  border-radius: 5px;
+  border-color: #E6DBCD;
+  padding: 10px 20px;
+}
