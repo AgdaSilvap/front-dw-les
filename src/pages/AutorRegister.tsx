@@ -1,10 +1,40 @@
-import { useEffect } from 'react';
+import { useEffect, type FormEvent } from 'react';
 import { enableBootstrapValidation } from '../utils/scripts';
+import { AutorService } from '../services/autorService';
 
 export const AutorRegister = () => {
+
   useEffect(() => {
     enableBootstrapValidation();
   }, []);
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    const form = e.target as HTMLFormElement;
+    if (!form.checkValidity()) {
+      form.classList.add('was-validated');
+      return;
+    }
+
+    const autor = {
+      nome: form.nome.value,
+      nacionalidade: form.nacionalidade.value,
+      nascimento: new Date(
+        form.dataNascimento.value.split('/').reverse().join('-')
+      ).toISOString(),
+    };
+
+    try {
+      await AutorService.create(autor);
+      alert('Autor cadastrado com sucesso!');
+      form.reset();
+      form.classList.remove('was-validated');
+    } catch (error) {
+      console.error('Erro ao cadastrar autor:', error);
+      alert('Erro ao cadastrar autor. Tente novamente.');
+    }
+  }
+
 
   return (
     <>
@@ -12,7 +42,7 @@ export const AutorRegister = () => {
         <div className="row">
           <div className="col-6">
             <h3 className="nome-sistema fw-bold">Cadastro de Autor</h3>
-            <form action="submit" className="needs-validation" noValidate>
+            <form onSubmit={handleSubmit} className="needs-validation" noValidate>
               <div className="mb-3">
                 <label htmlFor="nome" className="form-label nome-sistema">Nome</label>
                 <input
