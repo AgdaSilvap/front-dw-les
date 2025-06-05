@@ -1,10 +1,38 @@
-import { useEffect } from "react";
+import { useEffect, type FormEvent } from "react";
 import { enableBootstrapValidation } from "../utils/scripts";
+import { PublisherService } from "../services/publisherService";
 
 export const PublisherRegister = () => {
+
   useEffect(() => {
     enableBootstrapValidation();
   }, []);
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    const form = e.target as HTMLFormElement;
+    if (!form.checkValidity()) {
+      form.classList.add("was-validated");
+      return;
+    }
+    const editora = {
+      nome: form.nome.value,
+      cnpj: form.cnpj.value.replace(/\D/g, ""), // Remove tudo que não é número
+      endereco: form.endereco.value,
+      telefone: form.telefone.value.replace(/\D/g, ""), // Remove tudo que não é número
+      email: form.email.value,
+      website: form.website.value,
+    };
+    try {
+      await PublisherService.create(editora);
+      alert("Editora cadastrada com sucesso!");
+      form.reset();
+      form.classList.remove("was-validated");
+    } catch (error) {
+      console.error("Erro ao cadastrar editora:", error);
+      alert("Erro ao cadastrar editora. Tente novamente.");
+    }
+  }
 
   return (
     <>
@@ -12,7 +40,7 @@ export const PublisherRegister = () => {
         <div className="row">
           <div className="col-6">
             <h3 className="nome-sistema fw-bold">Cadastro de Editora</h3>
-            <form action="submit" className="needs-validation" noValidate>
+            <form onSubmit={handleSubmit} className="needs-validation" noValidate>
               <div className="mb-3">
                 <label htmlFor="nome" className="form-label nome-sistema">Nome</label>
                 <input
@@ -73,7 +101,7 @@ export const PublisherRegister = () => {
                   id="telefone"
                   placeholder="(11) 1234-5678"
                   minLength={10}
-                  maxLength={11}
+                  maxLength={17}
                   onInput={(e) => {
                     let value = (e.target as HTMLInputElement).value;
                     value = value.replace(/\D/g, ""); // Remove tudo que não é número
