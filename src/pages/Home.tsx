@@ -8,14 +8,14 @@ export const Home = () => {
       <HomeSection titulo="Cadastros">
         <CardLink icone={"bi-bookmarks"} titulo={"Editora"} link={"publisher-register"} />
         <CardLink icone={"bi-vector-pen"} titulo={"Autor"} link={"autor-register"} />
-        <CardLink icone={"bi-journal-bookmark"} titulo={"Livro"} link={""} />
+        <CardLink icone={"bi-journal-bookmark"} titulo={"Livro"} link={"livro-register"} />
         <CardLink icone={"bi-person-heart"} titulo={"Cliente"} link={""} />
         <CardLink icone={"bi-person-lines-fill"} titulo={"Funcionário"} link={""} />
-        <CardLink icone={"bi-door-open"} titulo={"Sala"} link={""} />
+        <CardLink icone={"bi-door-open"} titulo={"Sala"} link={"sala-register"} />
       </HomeSection>
       <HomeSection titulo="Relatórios">
-        <CardLink icone={"bi-clock"} titulo={"Horários Livres"} link={""} />
-        <CardLink icone={"bi-person-vcard"} titulo={"Reservas"} link={""} />
+        <CardLink icone={"bi-clock"} titulo={"Salas Refrigeradas"} link={"salas-refrigeradas"} />
+        <CardLink icone={"bi-person-vcard"} titulo={"Salas por Tempo"} link={"salas-por-tempo"} />
         <CardLink icone={"bi-calendar4-week"} titulo={"Aluguel"} link={""} />
         <CardLink icone={"bi-person-video2"} titulo={"Livros por Autor"} link={""} />
         <CardLink icone={"bi-pencil-square"} titulo={"Editora por Autor"} link={""} />
@@ -24,7 +24,7 @@ export const Home = () => {
       <HomeSection titulo="Processos">
         <CardLink icone={"bi-chat-dots"} titulo={"Feedback de Reserva"} link={"feedback"} />
         <CardLink icone={"bi-calendar4-week"} titulo={"Aluguel de Livros"} link={""} />
-        <CardLink icone={"bi-ticket-perforated"} titulo={"Reserva de Leitura"} link={""} />
+        <CardLink icone={"bi-ticket-perforated"} titulo={"Reserva de Leitura"} link={"reserva-register"} />
       </HomeSection>
 
       <section className="image-section rounded-5 align-items-center mt-5 p-2">
