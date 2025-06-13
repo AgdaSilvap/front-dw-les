@@ -11,6 +11,8 @@ import { FeedbackPage } from './pages/FeedbackPage.tsx';
 import { ClienteRegister } from './pages/ClienteRegister.tsx';
 import { FuncionarioRegister } from './pages/FuncionarioRegister.tsx';
 import { AluguelPage } from './pages/AluguelPage.tsx';
+import { RelatorioAluguelPorClientePage } from './pages/AluguelPorClientePage.tsx';
+import { RelatorioAluguelPorAutorPage } from './pages/AluguelPorAutorPage.tsx';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -25,6 +27,8 @@ createRoot(document.getElementById('root')!).render(
           <Route path="publisher-register" element={<PublisherRegister />} />
           <Route path="feedback" element={<FeedbackPage />} />
           <Route path="aluguel" element={<AluguelPage />} />
+          <Route path="aluguel-cliente" element={<RelatorioAluguelPorClientePage />} />
+          <Route path="aluguel-autor" element={<RelatorioAluguelPorAutorPage />} />
         </Route>
 
       </Routes>

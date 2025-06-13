@@ -16,8 +16,8 @@ export const Home = () => {
       <HomeSection titulo="Relatórios">
         <CardLink icone={"bi-clock"} titulo={"Horários Livres"} link={""} />
         <CardLink icone={"bi-person-vcard"} titulo={"Reservas"} link={""} />
-        <CardLink icone={"bi-calendar4-week"} titulo={"Livros Alugados por Cliente"} link={""} />
-        <CardLink icone={"bi-person-video2"} titulo={"Livros Alugados por Autor"} link={""} />
+        <CardLink icone={"bi-calendar4-week"} titulo={"Livros Alugados por Cliente"} link={"aluguel-cliente"} />
+        <CardLink icone={"bi-person-video2"} titulo={"Livros Alugados por Autor"} link={"aluguel-autor"} />
         <CardLink icone={"bi-pencil-square"} titulo={"Editora por Autor"} link={""} />
         <CardLink icone={"bi-chat-dots"} titulo={"Feedbacks"} link={""} />
       </HomeSection>
