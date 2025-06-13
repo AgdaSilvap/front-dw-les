@@ -89,10 +89,29 @@ export const AluguelPage = () => {
     const handleAddLivro = (e: FormEvent) => {
         e.preventDefault();
 
+        // Pega o formulário mais próximo para aplicar a validação do Bootstrap
         const form = e.currentTarget.closest('form') as HTMLFormElement;
 
+        // Validação específica para a adição de um livro
         if (!selectedLivroId || desformatarValorReais(valorInput) <= 0) {
-            form.classList.add('was-validated');
+            // Adiciona a classe de validação APENAS se os campos de adição não estiverem preenchidos
+            // Isso simula o comportamento "required" para o ato de adicionar
+            const livroSelect = form.querySelector('#livro') as HTMLSelectElement;
+            const valorInputEl = form.querySelector('#valor') as HTMLInputElement;
+
+            if (!selectedLivroId) {
+                livroSelect.classList.add('is-invalid');
+            } else {
+                livroSelect.classList.remove('is-invalid');
+            }
+
+            if (desformatarValorReais(valorInput) <= 0) {
+                valorInputEl.classList.add('is-invalid');
+            } else {
+                valorInputEl.classList.remove('is-invalid');
+            }
+
+            // O form principal não precisa ter 'was-validated' adicionado aqui para evitar conflitos
             return;
         }
 
@@ -110,7 +129,12 @@ export const AluguelPage = () => {
 
             setSelectedLivroId("");
             setValorInput("R$ 0,00");
-            form.classList.remove('was-validated');
+            // Remove a validação dos campos de adição após um sucesso
+            const livroSelect = form.querySelector('#livro') as HTMLSelectElement;
+            const valorInputEl = form.querySelector('#valor') as HTMLInputElement;
+            livroSelect.classList.remove('is-invalid');
+            valorInputEl.classList.remove('is-invalid');
+            livroSelect.value = ""; // Garante que o select volte ao "selecione um livro"
         }
     };
 
@@ -122,8 +146,10 @@ export const AluguelPage = () => {
         e.preventDefault();
         const form = e.currentTarget as HTMLFormElement;
 
+        // Adiciona a classe de validação ao formulário principal antes de verificar
         form.classList.add('was-validated');
 
+        // Validação principal para finalizar o aluguel
         if (!selectedClienteId || !selectedFuncionarioId || livrosParaAlugar.length === 0) {
             alert("Por favor, selecione um cliente, um funcionário e adicione pelo menos um livro antes de finalizar.");
             return;
@@ -165,7 +191,7 @@ export const AluguelPage = () => {
                                     name="livro"
                                     id="livro"
                                     className="form-select"
-                                    required
+                                    // Removido o atributo 'required' direto do select
                                     value={selectedLivroId}
                                     onChange={handleLivroChange}
                                 >
@@ -178,7 +204,7 @@ export const AluguelPage = () => {
                                         </option>
                                     ))}
                                 </select>
-                                {/* <div className="invalid-feedback">O Livro é obrigatório.</div> */}
+                                <div className="invalid-feedback">O Livro é obrigatório para adicionar.</div>
                             </div>
 
                             <div className="mb-3">
@@ -190,7 +216,7 @@ export const AluguelPage = () => {
                                     placeholder="R$ 0,00"
                                     value={valorInput}
                                     onInput={handleValorInputChange}
-                                    required
+                                    required // O valor ainda é obrigatório para adicionar
                                 />
                                 <div className="invalid-feedback">O valor é obrigatório e deve ser maior que R$ 0,00.</div>
                             </div>
@@ -218,7 +244,7 @@ export const AluguelPage = () => {
                                     onChange={(e) => setSelectedClienteId(e.target.value)}
                                 >
                                     <option value="" disabled>
-                                        Seleccione um cliente
+                                        Selecione um cliente
                                     </option>
                                     {clientes.map((cliente) => (
                                         <option key={cliente.id} value={cliente.id}>
