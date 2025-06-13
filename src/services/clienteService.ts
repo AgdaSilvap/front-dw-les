@@ -1,12 +1,12 @@
 import { api } from "./api";
 
 export interface Cliente {
-  nome: string;
-  nascimento: string;
-  genero: string;
-  cpf: string;
-  telefone: string;
-  endereco: string;
+  dsNome: string;
+  dtNascimento: string;
+  dsGenero: string;
+  dsCpf: string;
+  dsTelefone: string;
+  dsEndereco: string;
 }
 
 export const ClienteService = {

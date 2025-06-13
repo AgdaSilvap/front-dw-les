@@ -1,8 +1,8 @@
 import { useEffect, type FormEvent } from 'react';
 import { enableBootstrapValidation } from '../utils/scripts';
-import { ClienteService } from '../services/clienteService';
+import { FuncionarioService } from '../services/funcionarioService';
 
-export const ClienteRegister = () => {
+export const FuncionarioRegister = () => {
 
     useEffect(() => {
         enableBootstrapValidation();
@@ -16,7 +16,7 @@ export const ClienteRegister = () => {
             return;
         }
 
-        const cliente = {
+        const funcionario = {
             dsNome: form.nome.value,
             dtNascimento: new Date(
                 form.dataNascimento.value.split('/').reverse().join('-')
@@ -28,13 +28,13 @@ export const ClienteRegister = () => {
         };
 
         try {
-            await ClienteService.create(cliente);
-            alert('Cliente cadastrado com sucesso!');
+            await FuncionarioService.create(funcionario);
+            alert('Funcionário cadastrado com sucesso!');
             form.reset();
             form.classList.remove('was-validated');
         } catch (error) {
-            console.error('Erro ao cadastrar cliente:', error);
-            alert('Erro ao cadastrar cliente. Tente novamente.');
+            console.error('Erro ao cadastrar Funcionário:', error);
+            alert('Erro ao cadastrar Funcionário. Tente novamente.');
         }
     }
 
@@ -44,7 +44,7 @@ export const ClienteRegister = () => {
             <div className="container-fluid">
                 <div className="row">
                     <div className="col-6">
-                        <h3 className="nome-sistema fw-bold">Cadastro de Cliente</h3>
+                        <h3 className="nome-sistema fw-bold">Cadastro de Funcionario</h3>
                         <form onSubmit={handleSubmit} className="needs-validation" noValidate>
                             <div className="mb-3">
                                 <label htmlFor="nome" className="form-label nome-sistema">Nome</label>
@@ -52,7 +52,7 @@ export const ClienteRegister = () => {
                                     type="text"
                                     className="form-control"
                                     id="nome"
-                                    placeholder="Digite o nome do Cliente"
+                                    placeholder="Digite o nome do Funcionário"
                                     minLength={3}
                                     maxLength={50}
                                     required />

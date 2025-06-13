@@ -9,6 +9,7 @@ import { AutorRegister } from './pages/AutorRegister.tsx';
 import { PublisherRegister } from './pages/PublisherRegister.tsx';
 import { FeedbackPage } from './pages/FeedbackPage.tsx';
 import { ClienteRegister } from './pages/ClienteRegister.tsx';
+import { FuncionarioRegister } from './pages/FuncionarioRegister.tsx';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -19,7 +20,7 @@ createRoot(document.getElementById('root')!).render(
           <Route index element={<Home />} />
           <Route path="autor-register" element={<AutorRegister />} />
           <Route path="cliente-register" element={<ClienteRegister />} />
-          {/* <Route path="funcionario-register" element={<FuncionarioRegister />} /> */}
+          <Route path="funcionario-register" element={<FuncionarioRegister />} />
           <Route path="publisher-register" element={<PublisherRegister />} />
           <Route path="feedback" element={<FeedbackPage />} />
         </Route>
