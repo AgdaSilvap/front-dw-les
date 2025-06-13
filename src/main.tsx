@@ -10,6 +10,7 @@ import { PublisherRegister } from './pages/PublisherRegister.tsx';
 import { FeedbackPage } from './pages/FeedbackPage.tsx';
 import { ClienteRegister } from './pages/ClienteRegister.tsx';
 import { FuncionarioRegister } from './pages/FuncionarioRegister.tsx';
+import { AluguelPage } from './pages/AluguelPage.tsx';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -23,6 +24,7 @@ createRoot(document.getElementById('root')!).render(
           <Route path="funcionario-register" element={<FuncionarioRegister />} />
           <Route path="publisher-register" element={<PublisherRegister />} />
           <Route path="feedback" element={<FeedbackPage />} />
+          <Route path="aluguel" element={<AluguelPage />} />
         </Route>
 
       </Routes>
