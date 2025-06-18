@@ -30,5 +30,9 @@ export const ReservaService = {
   delete: async (id: string) => {
     const response = await api.delete(`/reservas/${id}`);
     return response.data;
-  }
+  },
+  listarReservasPorCliente: async (clienteId: string) => {
+    const response = await api.get(`/clientes/${clienteId}/reservas`);
+    return response.data;
+  },
 };
