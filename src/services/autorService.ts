@@ -1,6 +1,7 @@
-import  {api} from "./api";
+import { api } from "./api";
 
 export interface Autor {
+  id?: number;
   nome: string;
   nacionalidade: string;
   nascimento: string;
@@ -25,6 +26,10 @@ export const AutorService = {
   },
   delete: async (id: string) => {
     const response = await api.delete(`/autores/${id}`);
+    return response.data;
+  },
+  listaEditorasPorAutor: async (autorId: string) => {
+    const response = await api.get(`/autores/${autorId}/editoras`);
     return response.data;
   }
 }

@@ -29,9 +29,15 @@ export const AutorRegister = () => {
       alert('Autor cadastrado com sucesso!');
       form.reset();
       form.classList.remove('was-validated');
-    } catch (error) {
+    } catch (error: any) {
       console.error('Erro ao cadastrar autor:', error);
-      alert('Erro ao cadastrar autor. Tente novamente.');
+
+      const errorMessage =
+        error?.response?.data?.message ||
+        error?.response?.data ||
+        'Erro desconhecido ao cadastrar autor.';
+
+      alert(`Erro ao cadastrar autor: ${errorMessage}`);
     }
   }
 
