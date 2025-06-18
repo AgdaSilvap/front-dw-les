@@ -2,11 +2,13 @@ import { api } from "./api";
 
 export interface Livro {
   dsTitulo: string;
-  dtPublicacao: string; 
+  dtPublicacao: string;
   isbn: string;
   dsGenero: string;
   nrPaginas: number;
   dsTipo: string;
+  editoraId: number;
+  autorId: number;
 }
 
 export const LivroService = {

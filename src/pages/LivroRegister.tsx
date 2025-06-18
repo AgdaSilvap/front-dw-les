@@ -1,11 +1,38 @@
-import { useEffect, type FormEvent } from 'react';
+import { useEffect, useState, type FormEvent } from 'react';
 import { enableBootstrapValidation } from '../utils/scripts';
-import { LivroService } from '../services/livroService';
+import { LivroService, type Livro } from '../services/livroService';
+import { PublisherService } from '../services/publisherService';
+import { AutorService, type Autor } from '../services/autorService';
+
+
+// Interface opcional para autocomplete se ainda não estiver declarada
+interface Editora {
+  id: number;
+  nome: string;
+}
 
 export const LivroRegister = () => {
+  const [editoras, setEditoras] = useState<Editora[]>([]);
+  const [autores, setAutores] = useState<Autor[]>([]);
 
   useEffect(() => {
     enableBootstrapValidation();
+
+    PublisherService.getAll()
+      .then(setEditoras)
+      .catch((error) => {
+        console.error('Erro ao carregar editoras:', error);
+        alert('Erro ao carregar editoras. Verifique sua conexão.');
+      });
+  }, []);
+
+  useEffect(() => {
+    AutorService.getAll()
+      .then(setAutores)
+      .catch((error) => {
+        console.error('Erro ao carregar autores:', error);
+        alert('Erro ao carregar autores. Verifique sua conexão.');
+      });
   }, []);
 
   const handleSubmit = async (e: FormEvent) => {
@@ -16,15 +43,15 @@ export const LivroRegister = () => {
       return;
     }
 
-    const livro = {
+    const livro: Livro = {
       dsTitulo: form.dsTitulo.value.trim(),
-      dtPublicacao: new Date(
-        form.dtPublicacao.value.split('/').reverse().join('-')
-      ).toISOString(),
+      dtPublicacao: new Date(form.dtPublicacao.value.split('/').reverse().join('-')).toISOString(),
       isbn: form.isbn.value.trim(),
       dsGenero: form.dsGenero.value.trim(),
       nrPaginas: parseInt(form.nrPaginas.value, 10),
       dsTipo: form.dsTipo.value.trim(),
+      editoraId: parseInt(form.editoraId.value, 10),
+      autorId: parseInt(form.autorId.value.split(' - ')[0], 10),
     };
 
     try {
@@ -36,11 +63,9 @@ export const LivroRegister = () => {
       console.error('Erro ao cadastrar livro:', error);
       alert('Erro ao cadastrar livro. Tente novamente.');
     }
-  }
+  };
 
-
-return (
-  <>
+  return (
     <div className="container-fluid">
       <div className="row">
         <div className="col-6">
@@ -63,6 +88,27 @@ return (
             </div>
 
             <div className="mb-3">
+              <label htmlFor="autorId" className="form-label nome-sistema">Autor</label>
+              <input
+                className="form-control"
+                list="lista-de-autores"
+                id="autorId"
+                name="autorId"
+                placeholder="Digite ou selecione um autor"
+                required
+              />
+              <datalist id="lista-de-autores">
+                {autores.map((autor) => (
+                  <option key={autor.id} value={`${autor.id} - ${autor.nome}`} />
+                ))}
+              </datalist>
+              <div className="invalid-feedback">
+                O autor é obrigatório.
+              </div>
+            </div>
+
+
+            <div className="mb-3">
               <label htmlFor="dtPublicacao" className="form-label nome-sistema">Data de Publicação</label>
               <input
                 type="text"
@@ -75,16 +121,29 @@ return (
                 onInput={(e) => {
                   let value = (e.target as HTMLInputElement).value;
                   value = value.replace(/\D/g, "");
-
                   if (value.length > 2) value = value.slice(0, 2) + "/" + value.slice(2);
                   if (value.length > 5) value = value.slice(0, 5) + "/" + value.slice(5);
                   if (value.length > 10) value = value.slice(0, 10);
-
                   (e.target as HTMLInputElement).value = value;
                 }}
               />
               <div className="invalid-feedback">
                 A data de publicação é obrigatória.
+              </div>
+            </div>
+
+            <div className="mb-3">
+              <label htmlFor="editoraId" className="form-label nome-sistema">Editora</label>
+              <select className="form-select" id="editoraId" name="editoraId" required>
+                <option value="">Selecione a editora</option>
+                {editoras.map((editora) => (
+                  <option key={editora.id} value={editora.id}>
+                    {editora.nome}
+                  </option>
+                ))}
+              </select>
+              <div className="invalid-feedback">
+                A editora é obrigatória.
               </div>
             </div>
 
@@ -152,6 +211,5 @@ return (
         </div>
       </div>
     </div>
-  </>
-);
-}
+  );
+};
