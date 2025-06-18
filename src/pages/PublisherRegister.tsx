@@ -28,9 +28,15 @@ export const PublisherRegister = () => {
       alert("Editora cadastrada com sucesso!");
       form.reset();
       form.classList.remove("was-validated");
-    } catch (error) {
-      console.error("Erro ao cadastrar editora:", error);
-      alert("Erro ao cadastrar editora. Tente novamente.");
+    } catch (error: any) {
+      console.error('Erro ao cadastrar editora:', error);
+
+      const errorMessage =
+        error?.response?.data?.message ||
+        error?.response?.data ||
+        'Erro desconhecido ao cadastrar editora.';
+
+      alert(`Erro ao cadastrar editora: ${errorMessage}`);
     }
   }
 
