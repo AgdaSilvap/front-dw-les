@@ -17,6 +17,8 @@ import { LivroRegister } from './pages/LivroRegister.tsx';
 import { SalaRegister } from './pages/SalaRegister.tsx';
 import { ReservaRegister } from './pages/ReservaRegister.tsx';
 import { SalasRefrigeradas } from './pages/RelSalasRefrigeradas.tsx';
+import { ListPublisherByAutor } from './pages/ListPublisherByAutor.tsx';
+import { ListFeedbacksPeriod } from './pages/ListFeedbacksPeriod.tsx';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -37,6 +39,8 @@ createRoot(document.getElementById('root')!).render(
           <Route path="sala-register" element={<SalaRegister />} />
           <Route path="reserva-register" element={<ReservaRegister />} />
           <Route path="salas-refrigeradas" element={<SalasRefrigeradas />} />
+          <Route path="editora-por-autor" element={<ListPublisherByAutor />} />
+          <Route path="list-feedbacks" element={<ListFeedbacksPeriod />} />
         </Route>
 
       </Routes>
