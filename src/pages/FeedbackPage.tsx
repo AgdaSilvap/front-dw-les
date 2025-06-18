@@ -1,16 +1,74 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { enableBootstrapValidation } from "../utils/scripts";
+import { ClienteService } from "../services/clienteService";
+import { ReservaService } from "../services/reservaService";
+import { FeedbackService } from "../services/feedbackService";
 
-type Cliente = { id: string; nome: string };
+type Cliente = { id: string; dsNome: string };
 type Reserva = { id: string; descricao: string };
 
 export const FeedbackPage = () => {
-  const [clientes, setClientes] = useState<Cliente[]>([]); //TODO: Fetch clientes from API
-  const [reservas, setReservas] = useState<Reserva[]>([]); //TODO: Fetch reservas from API
+  const [clientes, setClientes] = useState<Cliente[]>([]);
+  const [reservas, setReservas] = useState<Reserva[]>([]);
+  const [clienteSelecionado, setClienteSelecionado] = useState<string>("");
 
   useEffect(() => {
     enableBootstrapValidation();
+
+    ClienteService.getAll()
+      .then((data) => setClientes(data))
+      .catch((error) => {
+        console.error("Erro ao carregar clientes:", error);
+        alert("Erro ao carregar clientes. Verifique sua conexão.");
+      });
   }, []);
+
+  useEffect(() => {
+    if (!clienteSelecionado) {
+      setReservas([]); // limpa reservas se nenhum cliente selecionado
+      return;
+    }
+
+    ReservaService.listarReservasPorCliente(clienteSelecionado)
+      .then((data) => setReservas(data))
+      .catch((error) => {
+        console.error("Erro ao carregar reservas:", error);
+        alert("Erro ao carregar reservas. Verifique sua conexão.");
+      });
+  }, [clienteSelecionado]);
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    const form = e.target as HTMLFormElement;
+    if (!form.checkValidity()) {
+      form.classList.add('was-validated');
+      return;
+    }
+
+    const feedback = {
+      reservaId: form.reserva.value,
+      avaliacao: form.radioDefault.value === 'positiva',
+      quantidadePessoas: parseInt(form['qtd-pessoas'].value, 10),
+      experiencia: form.feedback.value,
+    };
+
+    try {
+      await FeedbackService.create(feedback);
+      alert('Feedback cadastrado com sucesso!');
+      form.reset();
+      form.classList.remove('was-validated');
+    } catch (error: any) {
+      console.error('Erro ao cadastrar feedback:', error);
+
+      // Tenta extrair mensagem específica do backend
+      const errorMessage =
+        error?.response?.data?.message || // caso esteja como { message: "..." }
+        error?.response?.data ||          // caso o backend retorne string simples
+        'Erro desconhecido ao cadastrar feedback.';
+
+      alert(`Erro ao cadastrar feedback: ${errorMessage}`);
+    }
+  }
 
   return (
     <>
@@ -18,7 +76,7 @@ export const FeedbackPage = () => {
         <div className="row">
           <div className="col-6">
             <h3 className="nome-sistema fw-bold">Feedback de Reserva de Leitura</h3>
-            <form className="needs-validation" noValidate>
+            <form onSubmit={handleSubmit} className="needs-validation" noValidate>
               <div className="mb-3">
                 <label htmlFor="cliente" className="form-label nome-sistema">
                   Cliente
@@ -29,13 +87,14 @@ export const FeedbackPage = () => {
                   className="form-select"
                   required
                   defaultValue=""
+                  onChange={(e) => setClienteSelecionado(e.target.value)}
                 >
                   <option value="" disabled>
                     Selecione um cliente
                   </option>
                   {clientes.map((cliente) => (
                     <option key={cliente.id} value={cliente.id}>
-                      {cliente.nome}
+                      {cliente.dsNome}
                     </option>
                   ))}
                 </select>
@@ -52,13 +111,14 @@ export const FeedbackPage = () => {
                   className="form-select"
                   required
                   defaultValue=""
+                  disabled={!clienteSelecionado} // desabilita se não há cliente
                 >
                   <option value="" disabled>
                     Selecione uma reserva
                   </option>
                   {reservas.map((reserva) => (
                     <option key={reserva.id} value={reserva.id}>
-                      {reserva.descricao}
+                      {reserva.id}
                     </option>
                   ))}
                 </select>
@@ -111,11 +171,11 @@ export const FeedbackPage = () => {
               </div>
 
               <div className="mb-3">
-                <label htmlFor="feedback" className="form-label nome-sistema">
+                <label htmlFor="experiencia" className="form-label nome-sistema">
                   Descreva como foi sua experiência da reserva de sala de leitura
                 </label>
                 <textarea
-                  name="feedback"
+                  name="experiencia"
                   id="feedback"
                   rows={5}
                   className="form-control"
@@ -141,4 +201,4 @@ export const FeedbackPage = () => {
       </div>
     </>
   );
-};
+}
