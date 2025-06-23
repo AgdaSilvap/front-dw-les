@@ -1,179 +1,265 @@
 import { useEffect, useState, FormEvent, ChangeEvent } from "react";
-import { enableBootstrapValidation } from "../utils/scripts";
+import { enableBootstrapValidation } from "../utils/scripts"; // Assumindo que este caminho está correto
+import { AutorService } from "../services/autorService"; // Importar ClienteService
+import { AluguelService } from "../services/aluguelService"; // Importar AluguelService
 
-type Autor = { id: string; dsNome: string };
+// Atualizar o tipo Cliente para refletir o ID vindo da API
+type Autor = { id: string; nome: string };
 
+// Atualizar o tipo ItemRelatorio para corresponder ao retorno exato da query SQL
 type ItemRelatorio = {
-    dtAluguel: string;
-    dsTituloLivro: string;
+  "Data de Aluguel": string;
+  "Nome do Livro": string;
 };
 
 export const RelatorioAluguelPorAutorPage = () => {
-    const [autores, setAutores] = useState<Autor[]>([]);
+  const [autores, setAutores] = useState<Autor[]>([]);
+  const [selectedAutorId, setSelectedAutorId] = useState<string>("");
+  const [dataInicialInput, setDataInicialInput] = useState<string>("");
+  const [dataFinalInput, setDataFinalInput] = useState<string>("");
+  const [itensRelatorio, setItensRelatorio] = useState<ItemRelatorio[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
-    const [selectedAutorId, setSelectedAutorId] = useState<string>("");
-    const [dataInicialInput, setDataInicialInput] = useState<string>("");
-    const [dataFinalInput, setDataFinalInput] = useState<string>("");
+  // Função auxiliar para formatar a data dd/mm/aaaa para aaaa-mm-dd
+  const formatDateForApi = (dateString: string): string => {
+    const [day, month, year] = dateString.split("/");
+    return `${year}-${month}-${day}`;
+  };
 
-    const [itensRelatorio, setItensRelatorio] = useState<ItemRelatorio[]>([]);
+  // Função auxiliar para formatar a data dd/mm/aaaa no input
+  const handleDateInput = (e: ChangeEvent<HTMLInputElement>) => {
+    let value = e.target.value;
+    value = value.replace(/\D/g, "");
 
-    useEffect(() => {
-        enableBootstrapValidation();
+    if (value.length > 2) value = value.slice(0, 2) + "/" + value.slice(2);
+    if (value.length > 5) value = value.slice(0, 5) + "/" + value.slice(5);
+    if (value.length > 10) value = value.slice(0, 10);
 
-        setAutores([
-            { id: "a1", dsNome: "Machado de Assis" },
-            { id: "a2", dsNome: "Clarice Lispector" },
-            { id: "a3", dsNome: "Monteiro Lobato" },
-        ]);
-    }, []);
+    return value;
+  };
 
-    const handleDateInput = (e: ChangeEvent<HTMLInputElement>) => {
-        let value = e.target.value;
-        value = value.replace(/\D/g, "");
+  const handleDataInicialChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setDataInicialInput(handleDateInput(e));
+  };
 
-        if (value.length > 2) value = value.slice(0, 2) + "/" + value.slice(2);
-        if (value.length > 5) value = value.slice(0, 5) + "/" + value.slice(5);
-        if (value.length > 10) value = value.slice(0, 10);
+  const handleDataFinalChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setDataFinalInput(handleDateInput(e));
+  };
 
-        return value;
+  // Carregar clientes ao montar o componente
+  useEffect(() => {
+    enableBootstrapValidation(); // Ativar validação do Bootstrap
+
+    const fetchAutores = async () => {
+      try {
+        setError(null);
+        setLoading(true);
+        const fetchedAutores: Autor[] = await AutorService.getAll();
+        setAutores(fetchedAutores);
+      } catch (err) {
+        console.error("Erro ao carregar autores:", err);
+        setError("Erro ao carregar autores. Por favor, tente novamente.");
+      } finally {
+        setLoading(false);
+      }
     };
 
-    const handleDataInicialChange = (e: ChangeEvent<HTMLInputElement>) => {
-        setDataInicialInput(handleDateInput(e));
-    };
+    fetchAutores();
+  }, []);
 
-    const handleDataFinalChange = (e: ChangeEvent<HTMLInputElement>) => {
-        setDataFinalInput(handleDateInput(e));
-    };
+  const handleGerarRelatorio = async (e: FormEvent) => {
+    e.preventDefault();
 
-    const handleGerarRelatorio = (e: FormEvent) => {
-        e.preventDefault();
+    const form = e.currentTarget as HTMLFormElement;
+    form.classList.add("was-validated");
 
-        const form = e.currentTarget as HTMLFormElement;
-        form.classList.add('was-validated');
+    // Validação do formulário
+    if (
+      !selectedAutorId ||
+      !dataInicialInput ||
+      dataInicialInput.length !== 10 ||
+      !dataFinalInput ||
+      dataFinalInput.length !== 10
+    ) {
+      // O Bootstrap já mostra feedback, mas um alert extra pode ser útil para o usuário
+      alert(
+        "Por favor, selecione um autor e informe as datas inicial e final corretamente (dd/mm/aaaa)."
+      );
+      return;
+    }
 
-        if (!selectedAutorId || !dataInicialInput || dataInicialInput.length !== 10 || !dataFinalInput || dataFinalInput.length !== 10) {
-            alert("Por favor, selecione um autor e informe as datas inicial e final corretamente (dd/mm/aaaa).");
-            return;
-        }
+    try {
+      setError(null);
+      setLoading(true);
 
-        console.log("Gerando relatório para:");
-        console.log("Autor ID:", selectedAutorId);
-        console.log("Data Inicial:", dataInicialInput);
-        console.log("Data Final:", dataFinalInput);
+      // Formatar as datas para o padrão esperado pela API (AAAA-MM-DD)
+      const dataInicioApi = formatDateForApi(dataInicialInput);
+      const dataFimApi = formatDateForApi(dataFinalInput);
 
-        const mockReportData: ItemRelatorio[] = [
-            { dtAluguel: "05/03/2024", dsTituloLivro: "O Alienista" },
-            { dtAluguel: "12/03/2024", dsTituloLivro: "Memórias Póstumas de Brás Cubas" },
-            { dtAluguel: "20/04/2024", dsTituloLivro: "A Hora da Estrela" },
-            { dtAluguel: "25/04/2024", dsTituloLivro: "Sítio do Picapau Amarelo" },
-        ];
-        setItensRelatorio(mockReportData);
+      // Chamar a API do relatório
+      const reportData: ItemRelatorio[] =
+        await AluguelService.getLivrosAlugadosPorAutorNoPeriodo(
+          selectedAutorId,
+          dataInicioApi, // Passa a data formatada
+          dataFimApi 
+        );
 
-        form.classList.remove('was-validated');
-    };
+      setItensRelatorio(reportData);
+      form.classList.remove("was-validated"); // Remover validação após sucesso
+    } catch (err) {
+      console.error("Erro ao gerar relatório:", err);
+      // Aqui você pode adicionar uma lógica mais sofisticada para exibir o erro ao usuário
+      setError(
+        "Erro ao gerar relatório. Verifique os dados e tente novamente."
+      );
+      setItensRelatorio([]); // Limpar relatório em caso de erro
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    return (
-        <>
-            <div className="container-fluid">
-                <div className="row">
-                    <div className="col-6">
-                        <h3 className="nome-sistema fw-bold">Relatório de Aluguel de Livros por Autor</h3>
-                        <form className="needs-validation" noValidate onSubmit={handleGerarRelatorio}>
-                            <div className="mb-3">
-                                <label htmlFor="autor" className="form-label nome-sistema">
-                                    Autor
-                                </label>
-                                <select
-                                    name="autor"
-                                    id="autor"
-                                    className="form-select"
-                                    required
-                                    value={selectedAutorId}
-                                    onChange={(e) => setSelectedAutorId(e.target.value)}
-                                >
-                                    <option value="" disabled>
-                                        Selecione o Autor
-                                    </option>
-                                    {autores.map((autor) => (
-                                        <option key={autor.id} value={autor.id}>
-                                            {autor.dsNome}
-                                        </option>
-                                    ))}
-                                </select>
-                                <div className="invalid-feedback">O autor é obrigatório.</div>
-                            </div>
+  return (
+    <>
+      <div className="container-fluid">
+        <div className="row">
+          <div className="col-6">
+            <h3 className="nome-sistema fw-bold">
+              Relatório de Aluguel de Livros por Autor
+            </h3>
+            <form
+              className="needs-validation"
+              noValidate
+              onSubmit={handleGerarRelatorio}
+            >
+              <div className="mb-3">
+                <label htmlFor="autor" className="form-label nome-sistema">
+                  Autor
+                </label>
+                <select
+                  name="autor"
+                  id="autor"
+                  className="form-select"
+                  required
+                  value={selectedAutorId}
+                  onChange={(e) => setSelectedAutorId(e.target.value)}
+                  disabled={loading} // Desabilitar enquanto carrega os clientes
+                >
+                  <option value="" disabled>
+                    {loading ? "Carregando autores..." : "Selecione o Autor"}
+                  </option>
+                  {autores.map((autor) => (
+                    <option key={autor.id} value={autor.id}>
+                      {autor.nome}
+                    </option>
+                  ))}
+                </select>
+                <div className="invalid-feedback">O autor é obrigatório.</div>
+              </div>
 
-                            <p className="nome-sistema mt-4">Selecione um período:</p>
+              <p className="nome-sistema mt-4">Selecione um período:</p>
 
-                            <div className="mb-3">
-                                <label htmlFor="dataInicial" className="form-label nome-sistema">Data inicial:</label>
-                                <input
-                                    type="text"
-                                    className="form-control"
-                                    id="dataInicial"
-                                    placeholder="dd/mm/aaaa"
-                                    minLength={10}
-                                    maxLength={10}
-                                    value={dataInicialInput}
-                                    onInput={handleDataInicialChange}
-                                    required
-                                />
-                                <div className="invalid-feedback">A data inicial é obrigatória e deve estar no formato dd/mm/aaaa.</div>
-                            </div>
-
-                            <div className="mb-3">
-                                <label htmlFor="dataFinal" className="form-label nome-sistema">Data final:</label>
-                                <input
-                                    type="text"
-                                    className="form-control"
-                                    id="dataFinal"
-                                    placeholder="dd/mm/aaaa"
-                                    minLength={10}
-                                    maxLength={10}
-                                    value={dataFinalInput}
-                                    onInput={handleDataFinalChange}
-                                    required
-                                />
-                                <div className="invalid-feedback">A data final é obrigatória e deve estar no formato dd/mm/aaaa.</div>
-                            </div>
-
-                            <button type="submit" className="btn-form w-100 mt-5 fw-semibold">
-                                Gerar relatório
-                            </button>
-                        </form>
-                    </div>
-
-                    <div className="col-6">
-                        <div className="card shadow-sm p-3 h-100">
-                            <table className="table table-striped mb-0">
-                                <thead className="table-light">
-                                    <tr>
-                                        <th scope="col" className="nome-sistema">Data</th>
-                                        <th scope="col" className="nome-sistema">Nome do Livro</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {itensRelatorio.length === 0 ? (
-                                        <tr>
-                                            <td colSpan={2} className="text-center text-muted py-3">
-                                                Nenhum relatório gerado ou dados não encontrados.
-                                            </td>
-                                        </tr>
-                                    ) : (
-                                        itensRelatorio.map((item, index) => (
-                                            <tr key={index}>
-                                                <td>{item.dtAluguel}</td>
-                                                <td>{item.dsTituloLivro}</td>
-                                            </tr>
-                                        ))
-                                    )}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
+              <div className="mb-3">
+                <label htmlFor="dataInicial" className="form-label nome-sistema">
+                  Data inicial:
+                </label>
+                <input
+                  type="text"
+                  className="form-control"
+                  id="dataInicial"
+                  placeholder="dd/mm/aaaa"
+                  minLength={10}
+                  maxLength={10}
+                  value={dataInicialInput}
+                  onInput={handleDataInicialChange}
+                  required
+                  disabled={loading}
+                />
+                <div className="invalid-feedback">
+                  A data inicial é obrigatória e deve estar no formato
+                  dd/mm/aaaa.
                 </div>
+              </div>
+
+              <div className="mb-3">
+                <label htmlFor="dataFinal" className="form-label nome-sistema">
+                  Data final:
+                </label>
+                <input
+                  type="text"
+                  className="form-control"
+                  id="dataFinal"
+                  placeholder="dd/mm/aaaa"
+                  minLength={10}
+                  maxLength={10}
+                  value={dataFinalInput}
+                  onInput={handleDataFinalChange}
+                  required
+                  disabled={loading}
+                />
+                <div className="invalid-feedback">
+                  A data final é obrigatória e deve estar no formato dd/mm/aaaa.
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                className="btn-form w-100 mt-5 fw-semibold"
+                disabled={loading}
+              >
+                {loading ? "Gerando..." : "Gerar relatório"}
+              </button>
+            </form>
+          </div>
+
+          <div className="col-6">
+            <div className="card shadow-sm p-3 h-100">
+              {error && (
+                <div className="alert alert-danger" role="alert">
+                  {error}
+                </div>
+              )}
+              {loading && !error && (
+                <div className="d-flex justify-content-center align-items-center h-100">
+                  <div className="spinner-border text-primary" role="status">
+                    <span className="visually-hidden">Carregando...</span>
+                  </div>
+                </div>
+              )}
+              {!loading && !error && (
+                <table className="table table-striped mb-0">
+                  <thead className="table-light">
+                    <tr>
+                      <th scope="col" className="nome-sistema">
+                        Data
+                      </th>
+                      <th scope="col" className="nome-sistema">
+                        Nome do Livro
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {itensRelatorio.length === 0 ? (
+                      <tr>
+                        <td colSpan={2} className="text-center text-muted py-3">
+                          Nenhum relatório gerado ou dados não encontrados.
+                        </td>
+                      </tr>
+                    ) : (
+                      itensRelatorio.map((item, index) => (
+                        <tr key={index}>
+                          <td>{item["Data de Aluguel"]}</td>
+                          <td>{item["Nome do Livro"]}</td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              )}
             </div>
-        </>
-    );
+          </div>
+        </div>
+      </div>
+    </>
+  );
 };
