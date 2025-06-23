@@ -4,7 +4,7 @@ export interface Aluguel {
   dtAluguel: string;
   dtDevolucao: string;
   dsTipoAluguel: string;
-  vlTotal: string;
+  vlTotal: number;
 }
 export interface ItemRelatorioLivroCliente {
   "Data de Aluguel": string;
