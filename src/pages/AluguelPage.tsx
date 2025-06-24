@@ -1,16 +1,24 @@
+// src/pages/AluguelPage.tsx
 import { useEffect, useState, FormEvent, ChangeEvent } from "react";
 import { enableBootstrapValidation } from "../utils/scripts";
+import { AluguelService } from "../services/aluguelService";
+
+import { ClienteService } from "../services/clienteService";
+import { FuncionarioService } from "../services/funcionarioService";
+import { LivroService } from "../services/livroService";
 
 type Cliente = { id: string; dsNome: string };
 type Funcionario = { id: string; dsNome: string };
-type Livro = { id: string; dsTitulo: string; vlAluguel: number };
+type Livro = { id: string; dsTitulo: string; dsTipo: string };
 
 type LivroAlugado = {
     id: string;
     livroId: string;
     dsTitulo: string;
     vlAluguel: number;
+    dsTipo: string;
 };
+
 
 export const AluguelPage = () => {
     const [clientes, setClientes] = useState<Cliente[]>([]);
@@ -25,35 +33,47 @@ export const AluguelPage = () => {
 
     const [livrosParaAlugar, setLivrosParaAlugar] = useState<LivroAlugado[]>([]);
 
+    const [mensagemSistema, setMensagemSistema] = useState<{ tipo: 'success' | 'error'; texto: string } | null>(null);
+
+
     useEffect(() => {
         enableBootstrapValidation();
 
-        setClientes([
-            { id: "c1", dsNome: "João Silva" },
-            { id: "c2", dsNome: "Maria Souza" },
-        ]);
-        setFuncionarios([
-            { id: "f1", dsNome: "Ana Paula" },
-            { id: "f2", dsNome: "Carlos Eduardo" },
-        ]);
-        setLivrosDisponiveis([
-            { id: "l1", dsTitulo: "O Senhor dos Anéis", vlAluguel: 25.50 },
-            { id: "l2", dsTitulo: "A Casa Torta", vlAluguel: 18.00 },
-            { id: "l3", dsTitulo: "Dom Casmurro", vlAluguel: 12.75 },
-            { id: "l4", dsTitulo: "A Culpa é das Estrelas", vlAluguel: 20.00 },
-        ]);
+        const carregarDados = async () => {
+            try {
+                const clientesData = await ClienteService.getAll();
+                setClientes(clientesData);
+                if (clientesData.length > 0) {
+                    setSelectedClienteId(String(clientesData[0].id));
+                }
+
+                const funcionariosData = await FuncionarioService.getAll();
+                setFuncionarios(funcionariosData);
+                if (funcionariosData.length > 0) {
+                    setSelectedFuncionarioId(String(funcionariosData[0].id));
+                }
+
+                const livrosData = await LivroService.getAll();
+                const livrosComValorPadrao = livrosData.map(livro => ({
+                    ...livro,
+                    id: String(livro.id),
+                    vlAluguel: 0
+                }));
+                setLivrosDisponiveis(livrosComValorPadrao);
+
+            } catch (error: any) {
+                console.error("Erro ao carregar dados iniciais:", error.response?.data || error);
+                setMensagemSistema({ tipo: 'error', texto: "Erro ao carregar os dados (clientes, funcionários, livros). Verifique o console." });
+            }
+        };
+
+        carregarDados();
     }, []);
 
     useEffect(() => {
-        if (selectedLivroId) {
-            const livroSelecionado = livrosDisponiveis.find(l => l.id === selectedLivroId);
-            if (livroSelecionado) {
-                setValorInput(formatarValorReais(livroSelecionado.vlAluguel));
-            }
-        } else {
-            setValorInput("R$ 0,00");
-        }
-    }, [selectedLivroId, livrosDisponiveis]);
+        setValorInput(formatarValorReais(0));
+    }, [selectedLivroId]);
+
 
     const formatarValorReais = (valor: number): string => {
         const valorString = (valor * 100).toFixed(0);
@@ -76,6 +96,8 @@ export const AluguelPage = () => {
 
     const handleLivroChange = (e: ChangeEvent<HTMLSelectElement>) => {
         setSelectedLivroId(e.target.value);
+        const livroSelect = e.target;
+        livroSelect.classList.remove('is-invalid');
     };
 
     const handleValorInputChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -84,57 +106,64 @@ export const AluguelPage = () => {
 
         const numero = parseInt(value || "0", 10);
         setValorInput(formatarValorReais(numero / 100));
+        const valorInputEl = e.target;
+        valorInputEl.classList.remove('is-invalid');
     };
 
     const handleAddLivro = (e: FormEvent) => {
         e.preventDefault();
 
-        // Pega o formulário mais próximo para aplicar a validação do Bootstrap
-        const form = e.currentTarget.closest('form') as HTMLFormElement;
+        setMensagemSistema(null);
 
-        // Validação específica para a adição de um livro
-        if (!selectedLivroId || desformatarValorReais(valorInput) <= 0) {
-            // Adiciona a classe de validação APENAS se os campos de adição não estiverem preenchidos
-            // Isso simula o comportamento "required" para o ato de adicionar
-            const livroSelect = form.querySelector('#livro') as HTMLSelectElement;
-            const valorInputEl = form.querySelector('#valor') as HTMLInputElement;
+        const valorDigitado = desformatarValorReais(valorInput);
+        let isValid = true;
 
-            if (!selectedLivroId) {
-                livroSelect.classList.add('is-invalid');
-            } else {
-                livroSelect.classList.remove('is-invalid');
-            }
+        const livroSelect = document.getElementById('livro') as HTMLSelectElement;
+        const valorInputEl = document.getElementById('valor') as HTMLInputElement;
 
-            if (desformatarValorReais(valorInput) <= 0) {
-                valorInputEl.classList.add('is-invalid');
-            } else {
-                valorInputEl.classList.remove('is-invalid');
-            }
+        if (!selectedLivroId) {
+            livroSelect.classList.add('is-invalid');
+            isValid = false;
+        } else {
+            livroSelect.classList.remove('is-invalid');
+        }
 
-            // O form principal não precisa ter 'was-validated' adicionado aqui para evitar conflitos
+        if (valorDigitado <= 0) {
+            valorInputEl.classList.add('is-invalid');
+            isValid = false;
+        } else {
+            valorInputEl.classList.remove('is-invalid');
+        }
+
+        if (!isValid) {
+            setMensagemSistema({ tipo: 'error', texto: "Por favor, selecione um livro e informe um valor válido (maior que R$ 0,00)." });
             return;
         }
 
         const livroSelecionado = livrosDisponiveis.find(l => l.id === selectedLivroId);
 
         if (livroSelecionado) {
+            if (livrosParaAlugar.length > 0 && livroSelecionado.dsTipo !== livrosParaAlugar[0].dsTipo) {
+                setMensagemSistema({ tipo: 'error', texto: `Não é permitido alugar livros de tipos diferentes em um mesmo aluguel. O tipo do livro selecionado (${livroSelecionado.dsTipo}) é diferente do(s) livro(s) já adicionado(s) (${livrosParaAlugar[0].dsTipo}).` });
+                return;
+            }
+
             const novoItem: LivroAlugado = {
                 id: Math.random().toString(36).substr(2, 9),
                 livroId: livroSelecionado.id,
                 dsTitulo: livroSelecionado.dsTitulo,
-                vlAluguel: desformatarValorReais(valorInput),
+                vlAluguel: valorDigitado,
+                dsTipo: livroSelecionado.dsTipo,
             };
 
-            setLivrosParaAlugar([...livrosParaAlugar, novoItem]);
+            setLivrosParaAlugar(prevLivros => [...prevLivros, novoItem]);
 
             setSelectedLivroId("");
             setValorInput("R$ 0,00");
-            // Remove a validação dos campos de adição após um sucesso
-            const livroSelect = form.querySelector('#livro') as HTMLSelectElement;
-            const valorInputEl = form.querySelector('#valor') as HTMLInputElement;
+
             livroSelect.classList.remove('is-invalid');
             valorInputEl.classList.remove('is-invalid');
-            livroSelect.value = ""; // Garante que o select volte ao "selecione um livro"
+            setMensagemSistema(null);
         }
     };
 
@@ -142,34 +171,73 @@ export const AluguelPage = () => {
         setLivrosParaAlugar(livrosParaAlugar.filter(item => item.id !== idParaRemover));
     };
 
-    const handleFinalizarAluguel = (e: FormEvent) => {
+    const handleFinalizarAluguel = async (e: FormEvent) => {
         e.preventDefault();
+        setMensagemSistema(null);
+
         const form = e.currentTarget as HTMLFormElement;
+        form.classList.remove('was-validated');
 
-        // Adiciona a classe de validação ao formulário principal antes de verificar
-        form.classList.add('was-validated');
+        let isFormValid = true;
 
-        // Validação principal para finalizar o aluguel
-        if (!selectedClienteId || !selectedFuncionarioId || livrosParaAlugar.length === 0) {
-            alert("Por favor, selecione um cliente, um funcionário e adicione pelo menos um livro antes de finalizar.");
+        if (!selectedClienteId) {
+            document.getElementById('cliente')?.classList.add('is-invalid');
+            isFormValid = false;
+        } else {
+            document.getElementById('cliente')?.classList.remove('is-invalid');
+        }
+
+        if (!selectedFuncionarioId) {
+            document.getElementById('funcionario')?.classList.add('is-invalid');
+            isFormValid = false;
+        } else {
+            document.getElementById('funcionario')?.classList.remove('is-invalid');
+        }
+
+        if (livrosParaAlugar.length === 0) {
+            setMensagemSistema({ tipo: 'error', texto: "Adicione pelo menos um livro ao aluguel." });
+            isFormValid = false;
+        }
+
+        if (!isFormValid) {
+            form.classList.add('was-validated');
             return;
         }
 
-        console.log("------------------------------------");
-        console.log("DETALHES DO ALUGUEL A SER FINALIZADO:");
-        console.log("Cliente ID:", selectedClienteId);
-        console.log("Funcionário ID:", selectedFuncionarioId);
-        console.log("Livros Alugados:", livrosParaAlugar);
-        console.log("Total Geral do Aluguel:", calcularTotal());
-        console.log("------------------------------------");
+        const livrosIdsParaBackend = livrosParaAlugar.map(item => item.livroId);
 
-        setSelectedClienteId("");
-        setSelectedFuncionarioId("");
-        setSelectedLivroId("");
-        setValorInput("R$ 0,00");
-        setLivrosParaAlugar([]);
-        form.classList.remove('was-validated');
-        alert("Aluguel finalizado (dados enviados para o console)!");
+        const dadosAluguel = {
+            dtAluguel: new Date().toISOString().split('T')[0],
+            dtDevolucao: "",
+            dsTipoAluguel: "",
+            // *** MUDANÇA AQUI: Enviar o vlTotal como número, não string formatada ***
+            vlTotal: calcularTotal(),
+            clienteId: selectedClienteId,
+            funcionarioId: selectedFuncionarioId,
+            livros: livrosIdsParaBackend,
+        };
+
+        try {
+            const response = await AluguelService.create(dadosAluguel);
+            setMensagemSistema({ tipo: 'success', texto: "Aluguel finalizado com sucesso!" });
+
+            console.log("------------------------------------");
+            console.log("RESPOSTA DO BACKEND APÓS FINALIZAR ALUGUEL:");
+            console.log(response);
+            console.log("------------------------------------");
+
+            setSelectedClienteId("");
+            setSelectedFuncionarioId("");
+            setSelectedLivroId("");
+            setValorInput("R$ 0,00");
+            setLivrosParaAlugar([]);
+            form.classList.remove('was-validated');
+
+        } catch (error: any) {
+            const errorMessage = error.response?.data?.message || "Erro desconhecido ao finalizar o aluguel.";
+            setMensagemSistema({ tipo: 'error', texto: `Erro: ${errorMessage}` });
+            console.error("Erro ao finalizar aluguel:", error.response?.data || error);
+        }
     };
 
     const calcularTotal = (): number => {
@@ -182,6 +250,11 @@ export const AluguelPage = () => {
                 <div className="row">
                     <div className="col-6">
                         <h3 className="nome-sistema fw-bold">Aluguel de Livro</h3>
+                        {mensagemSistema && (
+                            <div className={`alert alert-${mensagemSistema.tipo === 'success' ? 'success' : 'danger'}`} role="alert">
+                                {mensagemSistema.texto}
+                            </div>
+                        )}
                         <form className="needs-validation" noValidate onSubmit={handleFinalizarAluguel}>
                             <div className="mb-3">
                                 <label htmlFor="livro" className="form-label nome-sistema">
@@ -191,7 +264,6 @@ export const AluguelPage = () => {
                                     name="livro"
                                     id="livro"
                                     className="form-select"
-                                    // Removido o atributo 'required' direto do select
                                     value={selectedLivroId}
                                     onChange={handleLivroChange}
                                 >
@@ -200,7 +272,7 @@ export const AluguelPage = () => {
                                     </option>
                                     {livrosDisponiveis.map((livro) => (
                                         <option key={livro.id} value={livro.id}>
-                                            {livro.dsTitulo}
+                                            {livro.dsTitulo} ({livro.dsTipo})
                                         </option>
                                     ))}
                                 </select>
@@ -216,7 +288,6 @@ export const AluguelPage = () => {
                                     placeholder="R$ 0,00"
                                     value={valorInput}
                                     onInput={handleValorInputChange}
-                                    required // O valor ainda é obrigatório para adicionar
                                 />
                                 <div className="invalid-feedback">O valor é obrigatório e deve ser maior que R$ 0,00.</div>
                             </div>
