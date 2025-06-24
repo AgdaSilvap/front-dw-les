@@ -123,10 +123,9 @@ export const ListFeedbacksPeriod = () => {
         </div>
 
         {/* Gráfico */}
-        <div className="col-12 col-md-7 mt-4 d-flex flex-column align-items-center justify-content-center">
+        <div className="col-12 col-md-7">
           <h6 className="fw-semibold text-center">Relatório de feedback por período</h6>
-
-          <div className="w-100 d-flex justify-content-center align-items-center">
+          <div style={{ width: '100%', height: 300 }}>
             <ResponsiveContainer>
               <BarChart data={chartData}>
                 <CartesianGrid strokeDasharray="3 3" />
@@ -134,6 +133,7 @@ export const ListFeedbacksPeriod = () => {
                 <YAxis />
                 <Tooltip />
                 <Bar dataKey="quantidade" fill="#e0d5c6" barSize={50} />
+
               </BarChart>
             </ResponsiveContainer>
           </div>
