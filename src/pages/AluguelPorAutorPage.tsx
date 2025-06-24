@@ -1,4 +1,4 @@
-import { useEffect, useState, FormEvent, ChangeEvent } from "react";
+import { useEffect, useState, type FormEvent, type ChangeEvent } from "react";
 import { enableBootstrapValidation } from "../utils/scripts"; // Assumindo que este caminho está correto
 import { AutorService } from "../services/autorService"; // Importar ClienteService
 import { AluguelService } from "../services/aluguelService"; // Importar AluguelService
@@ -102,7 +102,7 @@ export const RelatorioAluguelPorAutorPage = () => {
         await AluguelService.getLivrosAlugadosPorAutorNoPeriodo(
           selectedAutorId,
           dataInicioApi, // Passa a data formatada
-          dataFimApi 
+          dataFimApi
         );
 
       setItensRelatorio(reportData);

@@ -1,5 +1,5 @@
 // src/pages/AluguelPage.tsx
-import { useEffect, useState, FormEvent, ChangeEvent } from "react";
+import { useEffect, useState, type FormEvent, type ChangeEvent } from "react";
 import { enableBootstrapValidation } from "../utils/scripts";
 import { AluguelService } from "../services/aluguelService";
 
@@ -54,7 +54,7 @@ export const AluguelPage = () => {
                 }
 
                 const livrosData = await LivroService.getAll();
-                const livrosComValorPadrao = livrosData.map(livro => ({
+                const livrosComValorPadrao = livrosData.map((livro: { id: any; }) => ({
                     ...livro,
                     id: String(livro.id),
                     vlAluguel: 0
