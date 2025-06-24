@@ -22,7 +22,7 @@ import { ListFeedbacksPeriod } from './pages/ListFeedbacksPeriod.tsx';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <BrowserRouter>
+    <BrowserRouter basename="/front-dw-les/">
       <Routes>
 
         <Route element={<Layout />}>
