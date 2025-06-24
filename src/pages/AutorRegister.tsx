@@ -46,7 +46,7 @@ export const AutorRegister = () => {
     <>
       <div className="container-fluid">
         <div className="row">
-          <div className="col-6">
+          <div className="col-12 col-md-6">
             <h3 className="nome-sistema fw-bold">Cadastro de Autor</h3>
             <form onSubmit={handleSubmit} className="needs-validation" noValidate>
               <div className="mb-3">
@@ -106,7 +106,7 @@ export const AutorRegister = () => {
               <button type="submit" className="btn-form fw-semibold w-100 mt-5">Cadastrar</button>
             </form>
           </div>
-          <div className="col-6 align-items-center d-flex justify-content-center">
+          <div className="col-12 col-md-6 align-items-center d-flex justify-content-center">
             <img src={`${import.meta.env.BASE_URL}autor.png`} alt="Uma mulher escrevendo em um caderno" className="img-fluid mx-auto w-50" />
           </div>
         </div>

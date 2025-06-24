@@ -28,10 +28,18 @@ export const Home = () => {
         <CardLink icone={"bi-ticket-perforated"} titulo={"Reserva de Leitura"} link={"reserva-register"} />
       </HomeSection>
 
-      <section className="image-section rounded-5 align-items-center mt-5 p-2">
-        <img src={`${import.meta.env.BASE_URL}alice.png`} alt="alice, coelho e chapeleiro maluco tomando chá" className="mb-0 px-5" />
-        <p className="fs-3 fw-bold mx-auto"><span className="d-block">2023 year 50 most</span>popular bestseller</p>
+      <section className="image-section rounded-5 d-flex flex-column flex-sm-row align-items-center justify-content-center gap-3 mt-5 p-2">
+        <img
+          src={`${import.meta.env.BASE_URL}alice.png`}
+          alt="alice, coelho e chapeleiro maluco tomando chá"
+          className="img-fluid px-3"
+        />
+        <p className="fs-3 fw-bold text-center m-0">
+          <span className="d-block">2023 year 50 most</span>
+          popular bestseller
+        </p>
       </section>
+
 
     </>
   );

@@ -246,7 +246,7 @@ export const AluguelPage = () => {
         <>
             <div className="container-fluid">
                 <div className="row">
-                    <div className="col-6">
+                    <div className="col-12 col-md-6">
                         <h3 className="nome-sistema fw-bold">Aluguel de Livro</h3>
                         {mensagemSistema && (
                             <div className={`alert alert-${mensagemSistema.tipo === 'success' ? 'success' : 'danger'}`} role="alert">
@@ -354,7 +354,7 @@ export const AluguelPage = () => {
                         </form>
                     </div>
 
-                    <div className="col-6">
+                    <div className="col-12 col-md-6 mt-4">
                         <div className="card shadow-sm p-3">
                             <table className="table table-striped mb-0">
                                 <thead className="table-light">

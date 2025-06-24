@@ -42,8 +42,31 @@
 .home-section {
   background-color: #E6DBCD;
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
+  grid-template-columns: 1fr;
+  gap: 1rem;
 }
+
+@media (min-width: 576px) {
+  .home-section {
+    grid-template-columns: repeat(2, 1fr);
+    /* sm: 2 colunas */
+  }
+}
+
+@media (min-width: 768px) {
+  .home-section {
+    grid-template-columns: repeat(3, 1fr);
+    /* md: 3 colunas */
+  }
+}
+
+@media (min-width: 992px) {
+  .home-section {
+    grid-template-columns: repeat(7, 1fr);
+    /* lg+: 7 colunas */
+  }
+}
+
 
 
 /*formulários*/

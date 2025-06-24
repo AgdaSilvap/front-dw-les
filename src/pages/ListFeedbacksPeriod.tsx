@@ -79,7 +79,7 @@ export const ListFeedbacksPeriod = () => {
     <div className="container-fluid">
       <div className="row d-flex align-items-start">
         {/* Formulário */}
-        <div className="col-md-5">
+        <div className="col-12 col-md-5">
           <h4 className="fw-bold mb-4">Relatório de Feedbacks</h4>
           <form className="needs-validation" noValidate onSubmit={handleSubmit}>
             <p className="fw-medium">Selecione um período:</p>
@@ -123,9 +123,10 @@ export const ListFeedbacksPeriod = () => {
         </div>
 
         {/* Gráfico */}
-        <div className="col-md-7">
+        <div className="col-12 col-md-7 mt-4 d-flex flex-column align-items-center justify-content-center">
           <h6 className="fw-semibold text-center">Relatório de feedback por período</h6>
-          <div style={{ width: '100%', height: 300 }}>
+
+          <div className="w-100 d-flex justify-content-center align-items-center">
             <ResponsiveContainer>
               <BarChart data={chartData}>
                 <CartesianGrid strokeDasharray="3 3" />
@@ -133,12 +134,12 @@ export const ListFeedbacksPeriod = () => {
                 <YAxis />
                 <Tooltip />
                 <Bar dataKey="quantidade" fill="#e0d5c6" barSize={50} />
-
               </BarChart>
             </ResponsiveContainer>
           </div>
         </div>
+
       </div>
-    </div>
+    </div >
   );
 };

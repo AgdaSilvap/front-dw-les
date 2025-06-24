@@ -114,7 +114,7 @@ export const RelatorioAluguelPorAutorPage = () => {
     <>
       <div className="container-fluid">
         <div className="row">
-          <div className="col-6">
+          <div className="col-12 col-md-6">
             <h3 className="nome-sistema fw-bold">
               Relatório de Aluguel de Livros por Autor
             </h3>
@@ -203,7 +203,7 @@ export const RelatorioAluguelPorAutorPage = () => {
             </form>
           </div>
 
-          <div className="col-6">
+          <div className="col-12 col-md-6 mt-4">
             <div className="card shadow-sm p-3 h-100">
               {error && (
                 <div className="alert alert-danger" role="alert">

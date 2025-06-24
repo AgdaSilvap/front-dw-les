@@ -74,7 +74,7 @@ export const FeedbackPage = () => {
     <>
       <div className="container-fluid">
         <div className="row">
-          <div className="col-6">
+          <div className="col-12 col-md-6">
             <h3 className="nome-sistema fw-bold">Feedback de Reserva de Leitura</h3>
             <form onSubmit={handleSubmit} className="needs-validation" noValidate>
               <div className="mb-3">
@@ -194,7 +194,7 @@ export const FeedbackPage = () => {
             </form>
           </div>
 
-          <div className="col-6 align-items-center d-flex justify-content-center">
+          <div className="col-12 col-md-6 align-items-center d-flex justify-content-center">
             <img src={`${import.meta.env.BASE_URL}feedback.png`} alt="Imagem de feedback" className="img-fluid mx-auto" />
           </div>
         </div>

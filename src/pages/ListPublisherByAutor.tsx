@@ -52,7 +52,7 @@ export const ListPublisherByAutor = () => {
   return (
     <div className="container-fluid">
       <div className="row">
-        <div className="col-6">
+        <div className="col-12 col-md-6">
           <h3 className="nome-sistema fw-bold">Editoras por Autor</h3>
           <form className="needs-validation" noValidate onSubmit={handleSubmit}>
             <div className="mb-3">
@@ -83,7 +83,7 @@ export const ListPublisherByAutor = () => {
           </form>
         </div>
 
-        <div className="col-6">
+        <div className="col-12 col-md-6 mt-4">
           <div className="card shadow-sm p-3 h-100">
             <h5 className="mb-3">Editoras encontradas:</h5>
             {editoras.length === 0 ? (

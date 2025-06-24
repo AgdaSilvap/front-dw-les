@@ -37,7 +37,7 @@ export const SalaRegister = () => {
     <>
       <div className="container-fluid">
         <div className="row">
-          <div className="col-6">
+          <div className="col-12 col-md-6">
             <h3 className="nome-sistema fw-bold">Cadastro de Sala</h3>
             <form onSubmit={handleSubmit} className="needs-validation" noValidate>
               <div className="mb-3">
@@ -85,7 +85,7 @@ export const SalaRegister = () => {
             </form>
           </div>
 
-          <div className="col-6 align-items-center d-flex justify-content-center">
+          <div className="col-12 col-md-6 align-items-center d-flex justify-content-center">
             <img src={`${import.meta.env.BASE_URL}sala.png`} alt="Imagem de uma sala" className="img-fluid mx-auto w-50" />
           </div>
         </div>
