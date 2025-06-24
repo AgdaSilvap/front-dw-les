@@ -48,7 +48,6 @@ export const AluguelService = {
     dtFim: string
   ): Promise<ItemRelatorioLivroCliente[]> => {
     const response = await api.get(
-      // `/alugueis/relatorios/autor/${autorId}`
       `/alugueis/relatorios/autor/${autorId}?dtInicio=${dtInicio}&dtFim=${dtFim}`
     );
     return response.data;
