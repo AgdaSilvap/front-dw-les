@@ -49,7 +49,24 @@ export const ListFeedbacksPeriod = () => {
       const fimISO = formatarParaISO(dataFinal);
 
       const data = await FeedbackService.relatorioFeedbackPeriodo(inicioISO, fimISO);
-      setChartData(data);
+
+      // --- Start of changes ---
+      // Check if data is an array before attempting to map
+      if (!Array.isArray(data)) {
+        console.error('Dados recebidos não são um array:', data);
+        alert('Erro: Os dados do feedback não estão no formato esperado.');
+        setChartData([]); // Clear previous chart data if invalid data is received
+        return;
+      }
+      // --- End of changes ---
+
+      // Conversão do valor de quantidade para número
+      const dadosConvertidos = data.map(d => ({
+        mes: d.mes,
+        quantidade: Number(d.quantidade)
+      }));
+
+      setChartData(dadosConvertidos);
     } catch (error) {
       console.error('Erro ao buscar feedbacks:', error);
       alert('Erro ao buscar feedbacks: ' + error);
@@ -99,7 +116,7 @@ export const ListFeedbacksPeriod = () => {
               <div className="invalid-feedback">Informe a data no formato correto.</div>
             </div>
 
-            <button type="submit" className="btn btn-light w-100 mt-3 fw-semibold">
+            <button type="submit" className="btn btn-form w-100 mt-3 fw-semibold">
               Gerar relatório
             </button>
           </form>

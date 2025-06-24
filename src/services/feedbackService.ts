@@ -47,12 +47,14 @@ export const FeedbackService = {
     return response.data;
   },
 
-  relatorioFeedbackPeriodo: async (dtInicio: string, dtTermino: string): Promise<FeedbackChartData[]> => {
-    const response = await api.post("/relatorio-feedback-periodo", {
-      dtInicio,
-      dtTermino,
+  relatorioFeedbackPeriodo: async (dataInicial: string, dataFinal: string): Promise<FeedbackChartData[]> => {
+    console.log('aqui', dataInicial, dataFinal);
+    const response = await api.post<FeedbackChartData[]>('/relatorio-feedback-periodo', {
+      dtInicio: dataInicial,
+      dtTermino: dataFinal
     });
     return response.data;
-  },
+    console.log(response.data);
+  }
 
 };
