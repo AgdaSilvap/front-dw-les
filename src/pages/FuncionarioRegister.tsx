@@ -181,7 +181,7 @@ export const FuncionarioRegister = () => {
                         </form>
                     </div>
                     <div className="col-6 align-items-center d-flex justify-content-center">
-                        <img src="/autor.png" alt="Uma mulher escrevendo em um caderno" className="img-fluid mx-auto w-50" />
+                        <img src={`${import.meta.env.BASE_URL}autor.png`} alt="Uma mulher escrevendo em um caderno" className="img-fluid mx-auto w-50" />
                     </div>
                 </div>
             </div>

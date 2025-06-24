@@ -153,7 +153,7 @@ export const PublisherRegister = () => {
             </form>
           </div>
           <div className="col-6 align-items-center d-flex justify-content-center">
-            <img src="/editora.png" alt="Imagem simulando uam loja online" className="img-fluid mx-auto" />
+            <img src={`${import.meta.env.BASE_URL}editora.png`} alt="Imagem simulando uam loja online" className="img-fluid mx-auto" />
           </div>
         </div>
       </div>

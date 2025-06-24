@@ -207,7 +207,7 @@ export const LivroRegister = () => {
         </div>
 
         <div className="col-6 align-items-center d-flex justify-content-center">
-          <img src="/livro.png" alt="Uma pilha de livros" className="img-fluid mx-auto w-50" />
+          <img src={`${import.meta.env.BASE_URL}livro.png`} alt="Uma pilha de livros" className="img-fluid mx-auto w-50" />
         </div>
       </div>
     </div>

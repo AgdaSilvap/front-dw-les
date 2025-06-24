@@ -195,7 +195,7 @@ export const FeedbackPage = () => {
           </div>
 
           <div className="col-6 align-items-center d-flex justify-content-center">
-            <img src="/feedback.png" alt="Imagem de feedback" className="img-fluid mx-auto" />
+            <img src={`${import.meta.env.BASE_URL}feedback.png`} alt="Imagem de feedback" className="img-fluid mx-auto" />
           </div>
         </div>
       </div>

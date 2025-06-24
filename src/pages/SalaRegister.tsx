@@ -86,7 +86,7 @@ export const SalaRegister = () => {
           </div>
 
           <div className="col-6 align-items-center d-flex justify-content-center">
-            <img src="/sala.png" alt="Imagem de uma sala" className="img-fluid mx-auto w-50" />
+            <img src={`${import.meta.env.BASE_URL}sala.png`} alt="Imagem de uma sala" className="img-fluid mx-auto w-50" />
           </div>
         </div>
       </div>

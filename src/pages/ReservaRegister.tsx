@@ -166,7 +166,7 @@ export const ReservaRegister = () => {
         </div>
 
         <div className="col-6 d-flex align-items-center justify-content-center">
-          <img src="/reserva.png" alt="Imagem de reserva" className="img-fluid w-50" />
+          <img src={`${import.meta.env.BASE_URL}reserva.png`} alt="Imagem de reserva" className="img-fluid w-50" />
         </div>
       </div>
     </div>
