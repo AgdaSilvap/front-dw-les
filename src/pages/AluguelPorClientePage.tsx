@@ -1,12 +1,10 @@
 import { useEffect, useState, type FormEvent, type ChangeEvent } from "react";
-import { enableBootstrapValidation } from "../utils/scripts"; // Assumindo que este caminho está correto
-import { ClienteService } from "../services/clienteService"; // Importar ClienteService
-import { AluguelService } from "../services/aluguelService"; // Importar AluguelService
+import { enableBootstrapValidation } from "../utils/scripts";
+import { ClienteService } from "../services/clienteService";
+import { AluguelService } from "../services/aluguelService";
 
-// Atualizar o tipo Cliente para refletir o ID vindo da API
 type Cliente = { id: string; dsNome: string };
 
-// Atualizar o tipo ItemRelatorio para corresponder ao retorno exato da query SQL
 type ItemRelatorio = {
   "Data de Aluguel": string;
   "Nome do Livro": string;
@@ -21,13 +19,11 @@ export const RelatorioAluguelPorClientePage = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Função auxiliar para formatar a data dd/mm/aaaa para aaaa-mm-dd
   const formatDateForApi = (dateString: string): string => {
     const [day, month, year] = dateString.split("/");
     return `${year}-${month}-${day}`;
   };
 
-  // Função auxiliar para formatar a data dd/mm/aaaa no input
   const handleDateInput = (e: ChangeEvent<HTMLInputElement>) => {
     let value = e.target.value;
     value = value.replace(/\D/g, "");
@@ -47,9 +43,8 @@ export const RelatorioAluguelPorClientePage = () => {
     setDataFinalInput(handleDateInput(e));
   };
 
-  // Carregar clientes ao montar o componente
   useEffect(() => {
-    enableBootstrapValidation(); // Ativar validação do Bootstrap
+    enableBootstrapValidation();
 
     const fetchClientes = async () => {
       try {
@@ -74,7 +69,6 @@ export const RelatorioAluguelPorClientePage = () => {
     const form = e.currentTarget as HTMLFormElement;
     form.classList.add("was-validated");
 
-    // Validação do formulário
     if (
       !selectedClienteId ||
       !dataInicialInput ||
@@ -82,7 +76,6 @@ export const RelatorioAluguelPorClientePage = () => {
       !dataFinalInput ||
       dataFinalInput.length !== 10
     ) {
-      // O Bootstrap já mostra feedback, mas um alert extra pode ser útil para o usuário
       alert(
         "Por favor, selecione um cliente e informe as datas inicial e final corretamente (dd/mm/aaaa)."
       );
@@ -93,27 +86,24 @@ export const RelatorioAluguelPorClientePage = () => {
       setError(null);
       setLoading(true);
 
-      // Formatar as datas para o padrão esperado pela API (AAAA-MM-DD)
       const dataInicioApi = formatDateForApi(dataInicialInput);
       const dataFimApi = formatDateForApi(dataFinalInput);
 
-      // Chamar a API do relatório
       const reportData: ItemRelatorio[] =
         await AluguelService.getLivrosAlugadosPorClienteNoPeriodo(
           selectedClienteId,
-          dataInicioApi, // Passa a data formatada
+          dataInicioApi,
           dataFimApi
         );
 
       setItensRelatorio(reportData);
-      form.classList.remove("was-validated"); // Remover validação após sucesso
+      form.classList.remove("was-validated");
     } catch (err) {
       console.error("Erro ao gerar relatório:", err);
-      // Aqui você pode adicionar uma lógica mais sofisticada para exibir o erro ao usuário
       setError(
         "Erro ao gerar relatório. Verifique os dados e tente novamente."
       );
-      setItensRelatorio([]); // Limpar relatório em caso de erro
+      setItensRelatorio([]);
     } finally {
       setLoading(false);
     }
@@ -143,7 +133,7 @@ export const RelatorioAluguelPorClientePage = () => {
                   required
                   value={selectedClienteId}
                   onChange={(e) => setSelectedClienteId(e.target.value)}
-                  disabled={loading} // Desabilitar enquanto carrega os clientes
+                  disabled={loading}
                 >
                   <option value="" disabled>
                     {loading ? "Carregando clientes..." : "Selecione o Cliente"}

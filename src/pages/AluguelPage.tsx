@@ -1,4 +1,3 @@
-// src/pages/AluguelPage.tsx
 import { useEffect, useState, type FormEvent, type ChangeEvent } from "react";
 import { enableBootstrapValidation } from "../utils/scripts";
 import { AluguelService } from "../services/aluguelService";
@@ -210,7 +209,6 @@ export const AluguelPage = () => {
             dtAluguel: new Date().toISOString().split('T')[0],
             dtDevolucao: "",
             dsTipoAluguel: "",
-            // *** MUDANÇA AQUI: Enviar o vlTotal como número, não string formatada ***
             vlTotal: calcularTotal(),
             clienteId: selectedClienteId,
             funcionarioId: selectedFuncionarioId,
