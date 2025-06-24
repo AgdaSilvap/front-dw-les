@@ -2,6 +2,7 @@ import { CardLink } from "../components/CardLink";
 import { HomeSection } from "../components/HomeSection";
 
 
+
 export const Home = () => {
   return (
     <>
@@ -28,7 +29,7 @@ export const Home = () => {
       </HomeSection>
 
       <section className="image-section rounded-5 align-items-center mt-5 p-2">
-        <img src="/alice.png" alt="alice, coelho e chapeleiro maluco tomando chá" className="mb-0 px-5" />
+        <img src={`${import.meta.env.BASE_URL}alice.png`} alt="alice, coelho e chapeleiro maluco tomando chá" className="mb-0 px-5" />
         <p className="fs-3 fw-bold mx-auto"><span className="d-block">2023 year 50 most</span>popular bestseller</p>
       </section>
 
